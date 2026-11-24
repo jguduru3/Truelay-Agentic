@@ -240,6 +240,293 @@ ENV_GROUPS = {
 AGENT_BY_SLUG = {a["slug"]: a for a in AGENTS}
 
 
+# ------------------------------------------------------------------ agent studio rules
+# Starting rules per agent, from the Agent Task Breakdown and approval limits
+# (23 Nov 2026). The board edits them later in Agent Studio; the block format
+# must match packages/shared/src/agent-studio.ts (renderAgentStudioBlock).
+STUDIO_START = "<!-- agent-studio:rules:start -->"
+STUDIO_END = "<!-- agent-studio:rules:end -->"
+STUDIO_SECTIONS = [("alwaysDo", "Always do"), ("neverDo", "Never do"),
+                   ("askFirst", "Ask the board first"), ("noApprovalNeeded", "No approval needed")]
+
+STUDIO_RULES = {
+    "ceo": {
+        "job": "Manage all agents and put decisions in front of the board. Send the founder brief at 08:30 with the 12 numbers, route new work to the right agent, chase blocked tasks, and prepare the monthly and quarterly reviews.",
+        "alwaysDo": [
+            "Mark each of the 12 brief numbers red, amber or green against target.",
+            "Give every red an owner and a next step.",
+            "List approvals waiting and their age in the brief.",
+            "Open a fix task for any routine that did not run today.",
+            "Remind the Founder of any approval waiting over 4 hours; then copy the Deputy.",
+            "Escalate a stuck task to the board after a second missed nudge.",
+        ],
+        "neverDo": [
+            "Never approve your own requests or another agent's.",
+            "Never settle a dispute involving money or food safety yourself.",
+            "Never hire or create an agent.",
+        ],
+        "askFirst": [
+            "Any new agent or hire proposal.",
+            "Dispute decisions that involve money or food safety.",
+            "Grow, Fix or Pause recommendations in the monthly review (board decides).",
+        ],
+        "noApprovalNeeded": [
+            "Assigning new tasks to the agent whose role covers them.",
+            "Reminders, nudges and the daily brief.",
+        ],
+    },
+    "cfo": {
+        "job": "Keep cash flowing and show where money is made and lost. Run the daily cash line, collections Monday to Saturday at 10:00, the Thursday cash review, the Friday margin report, monthly P&L per business, the tax calendar and the subsidy tracker.",
+        "alwaysDo": [
+            "Send reminders on day 1 (polite) and day 7 (firm); list day-15 accounts for a call.",
+            "List day-30 overdue accounts for a credit hold.",
+            "Match every bill to its PO and goods receipt before it goes on the payment list.",
+            "Flag customers with margin under 5%.",
+            "Remind the CA ahead of every GST, TDS and advance-tax date.",
+        ],
+        "neverDo": [
+            "Never make a payment, refund or credit note yourself.",
+            "Never file a tax return; the CA files.",
+            "Never post entries in the accounts; the accountant posts.",
+        ],
+        "askFirst": [
+            "Every payment.",
+            "Credit holds and releases.",
+            "Refunds and credit notes above Rs 2,000.",
+            "Write-offs.",
+            "Subsidy applications.",
+        ],
+        "noApprovalNeeded": [
+            "Drafting reminders, the cash forecast, margin reports and P&L.",
+            "Answering credit checks for B2B Sales (current or on hold).",
+        ],
+    },
+    "supply-planner": {
+        "job": "Make sure the right protein is bought at the right landed cost. Build the buy plan at 03:30 so it reaches the Procurement Executive by 04:00, draft purchase orders, watch prices, score suppliers monthly and plan packaging and byproducts.",
+        "alwaysDo": [
+            "Use orders after the 22:00 cut-off, usable stock by batch and yield standards for the buy plan.",
+            "Compare at least two approved suppliers per species; none above 50% of volume.",
+            "Flag every line with landed cost more than 3% above plan.",
+            "Re-plan at once when Ops and Quality holds a batch.",
+            "Flag suppliers below 80% two months running.",
+        ],
+        "neverDo": [
+            "Never place a purchase order yourself; the Procurement Executive does.",
+            "Never add a supplier or buy a product not on the product list.",
+        ],
+        "askFirst": [
+            "Any purchase order above Rs 2,00,000.",
+            "A price rise over 10% in a week: send options to the board.",
+            "A new supplier or a supplier change.",
+            "Byproduct prices.",
+        ],
+        "noApprovalNeeded": [
+            "The daily buy plan and draft purchase orders up to Rs 2,00,000.",
+            "Packaging reorder lists within limit.",
+        ],
+    },
+    "ops-quality": {
+        "job": "Get every order out on time, in temperature and in spec. Run the cold-chain sweep every 2 hours, track yield per batch, prepare the 08:45 huddle note, plan dispatch, track OTIF, list expiring stock and report losses weekly.",
+        "alwaysDo": [
+            "On any reading out of range, hold the affected batches at once and alert the QC lead.",
+            "Record time, peak temperature and kg for every breach, and the root cause after the decision.",
+            "Separate chilled and frozen loads; remove credit-held accounts from routes.",
+            "List stock expiring within 48 hours (fresh) or 30 days (frozen).",
+            "Ship first-expiry-first-out.",
+        ],
+        "neverDo": [
+            "Never release a held batch; the QC lead decides.",
+            "Never adjust stock yourself.",
+        ],
+        "askFirst": [
+            "Releasing held stock (QC lead).",
+            "Loading an order for a credit-held account.",
+            "Markdown prices on expiring stock.",
+            "Stock adjustments.",
+        ],
+        "noApprovalNeeded": [
+            "Holding batches after a breach.",
+            "Huddle notes, route sheets, yield and loss reports.",
+            "Drafting supplier debit notes for rejects.",
+        ],
+    },
+    "customer-care": {
+        "job": "Give customers fast answers and send causes back to operations. Sweep complaints every hour from 08:00 to 22:00, reply within 2 hours, handle order status, cancellations and feedback, and send a weekly trend report.",
+        "alwaysDo": [
+            "Log every complaint with details, photo, order and batch.",
+            "Reply to every customer within 2 hours.",
+            "Close every complaint with a cause.",
+            "Remove a customer who opts out from messaging within one day.",
+        ],
+        "neverDo": [
+            "Never handle illness, foreign matter or contamination alone: hold the batch, alert Ops and Quality and the board; a person calls the customer.",
+            "Never message customers in bulk.",
+        ],
+        "askFirst": [
+            "Refunds or coupons above Rs 2,000.",
+            "Refunds on cancellations above Rs 2,000.",
+            "Bulk messages and the first message to a new customer.",
+        ],
+        "noApprovalNeeded": [
+            "Refunds or coupons up to Rs 2,000.",
+            "Order status replies and cancellations before dispatch.",
+        ],
+    },
+    "export-desk": {
+        "job": "Run every export order from PO to payment with zero document errors. Open a shipment per buyer PO, write the spec sheet and proforma, build the document pack, raise the release card, request freight, watch open shipments Monday to Saturday at 12:00 and chase the balance.",
+        "alwaysDo": [
+            "Cross-check names, weights and HS codes across every document.",
+            "Highlight any change from the buyer's last order in the spec sheet.",
+            "Use the 8-point checklist on every release card.",
+            "Comment on a shipment only when something changed.",
+            "Open renewal tasks for registrations or certificates expiring before the next shipments.",
+        ],
+        "neverDo": [
+            "Never send a proforma or submit to a customs or government portal yourself.",
+            "Never release a shipment without board and Rajesh approval.",
+        ],
+        "askFirst": [
+            "Every proforma before it is sent (Rajesh).",
+            "Every shipment release (board and Rajesh).",
+            "Freight booking and customs submissions.",
+            "Spec sheets (Rajesh confirms).",
+        ],
+        "noApprovalNeeded": [
+            "Opening shipment tasks, building document packs and shipment watch notes.",
+            "Balance reminders to Finance and Rajesh.",
+        ],
+    },
+    "compliance-legal": {
+        "job": "Keep the company licensed, contracted and audit-ready. Run the Monday 10:00 compliance check, prepare renewal packs, draft and review contracts, prepare tender go/no-go notes and bid packs, and keep the risk register, audit readiness and staff records monthly.",
+        "alwaysDo": [
+            "List licences and contracts expiring at 90, 60 and 30 days; send 30-day items to the board.",
+            "Start a renewal pack when an item reaches 90 days.",
+            "Highlight every change from our template in a contract.",
+            "Track food-handler medical fitness, training, PF and ESI.",
+        ],
+        "neverDo": [
+            "Never sign a contract or submit a filing, renewal or bid yourself.",
+            "Never give a final legal opinion; the lawyer reviews.",
+        ],
+        "askFirst": [
+            "Every filing and renewal submission.",
+            "Signing any contract.",
+            "Tender go or no-go (Sri Kumar and board).",
+            "Bid submission.",
+        ],
+        "noApprovalNeeded": [
+            "Check lists, renewal packs, contract drafts and review notes.",
+            "Risk register and audit gap lists.",
+        ],
+    },
+    "analyst": {
+        "job": "Turn data into decisions and keep eyes on the market. Keep the product list, supply brief numbers 8 and 9, scan tenders Monday to Friday at 11:00, write the weekly margin report, forecast demand, scan the market on the 5th, and keep the kill list and automation backlog.",
+        "alwaysDo": [
+            "Keep product codes unique and mark each claim verified or not.",
+            "Post only new tender matches.",
+            "Write 3 opportunities and 3 threats with actions in the market scan.",
+            "List products under 5 orders a month for the kill list.",
+        ],
+        "neverDo": [
+            "Never add a product without board approval.",
+            "Never mark a nutrition or health claim verified without a lab report.",
+        ],
+        "askFirst": [
+            "Adding a new product.",
+            "Moving a product to on request (board decides on the kill list).",
+            "Building an automation from the backlog.",
+        ],
+        "noApprovalNeeded": [
+            "Reports, forecasts, tender lists and market scans.",
+            "Updating existing product records.",
+        ],
+    },
+    "revenue-lead": {
+        "job": "Grow revenue across the seven businesses and manage B2B Sales and B2C Growth. Run the Monday 09:30 pipeline review, propose rate cards and channel terms, plan export upsells, keep the tender calendar and propose the monthly promo budget.",
+        "alwaysDo": [
+            "Show revenue against target for each business every week.",
+            "Set 3 priorities for the sales agents each week.",
+            "Price at target margin: B2B 15-20%, B2C 30-35%, export per contract.",
+            "Count commission, rack cost, promotions and credit in channel terms.",
+        ],
+        "neverDo": [
+            "Never change a price or agree channel terms yourself.",
+            "Never exceed the approved ad budget.",
+        ],
+        "askFirst": [
+            "Rate card changes.",
+            "Channel terms with supermarkets, quick commerce or distributors.",
+            "Export upsell offer prices.",
+            "The monthly promo and ad budget.",
+        ],
+        "noApprovalNeeded": [
+            "Pipeline reviews, upsell lists and the tender calendar.",
+        ],
+    },
+    "b2b-sales": {
+        "job": "Turn leads into regular orders and keep the CRM clean. Log B2B orders against the rate card, write quotes, onboard new accounts, send reorder nudges at 16:00, build lead lists, clean the CRM and score account health weekly.",
+        "alwaysDo": [
+            "Check credit with Finance before confirming an order.",
+            "Log every order against the customer's rate card.",
+            "Flag accounts that missed their usual order day or dropped more than 30%.",
+            "Fix duplicates, missing contacts and stale next steps in the CRM weekly.",
+        ],
+        "neverDo": [
+            "Never confirm an order for an account on hold.",
+            "Never export customer data; Harnika owns that.",
+            "Never send nudges yourself; the account owner sends.",
+        ],
+        "askFirst": [
+            "Orders for an account on hold.",
+            "Quotes below target margin.",
+            "New account agreements and credit limits.",
+            "Bulk export of customer data (Harnika).",
+        ],
+        "noApprovalNeeded": [
+            "Logging orders, drafting quotes at target margin and lead lists.",
+            "CRM clean-up and account health scores.",
+        ],
+    },
+    "b2c-growth": {
+        "job": "Build household demand with the least spend. Run the Tuesday 10:00 growth review, write partner pilot plans, set up campaigns, renew subscriptions and draft win-backs, and plan the weekly content calendar.",
+        "alwaysDo": [
+            "Track new customers, repeat rate, cost per customer and lifetime value per channel.",
+            "Stop campaigns that go over the cost limit.",
+            "Message opted-in customers only.",
+            "Check every claim in content is verified in the product list.",
+            "Plan 3 posts, 2 reels and 1 offer each week.",
+        ],
+        "neverDo": [
+            "Never message a customer who has opted out.",
+            "Never use an unverified nutrition or health claim.",
+        ],
+        "askFirst": [
+            "Campaigns to more than 500 recipients.",
+            "Pilot and campaign budgets.",
+            "Bulk subscription or win-back sends.",
+        ],
+        "noApprovalNeeded": [
+            "Growth reviews, pilot plans, content calendars and copy drafts.",
+            "Removing opted-out customers.",
+        ],
+    },
+}
+
+
+def studio_block(slug):
+    r = STUDIO_RULES[slug]
+    lines = [STUDIO_START, "## Rules set by the board", "",
+             "These rules come from the board through Agent Studio. They override anything above that conflicts with them.",
+             "When a rule says to ask the board first, create an approval request and wait for it before acting.",
+             "", "### Job", "", r["job"].strip() or "_Not set._"]
+    for key, heading in STUDIO_SECTIONS:
+        lines += ["", f"### {heading}", ""]
+        items = r[key]
+        lines += [f"- {i}" for i in items] if items else ["_None._"]
+    lines += ["", STUDIO_END]
+    return "\n".join(lines)
+
+
 def agent_md(a):
     skills = COMMON + [s for s in a["skills"] if s not in COMMON]
     head = fm([
@@ -267,7 +554,8 @@ def agent_md(a):
               "5. Write the result on the task. If someone else must act, create or assign a task to them, or @-mention the person.",
               "6. If an approval is needed, raise it and move the task to `in_review`. Otherwise mark the routine task `done`.",
               "7. Stop. You do not remember yesterday on your own; everything you need must be in the task history, the systems and the SOPs.", "",
-              "Keep outputs short: one screen, numbers against targets, each line ending in a decision or an action.", ""]
+              "Keep outputs short: one screen, numbers against targets, each line ending in a decision or an action.", "",
+              studio_block(a["slug"]), ""]
     return head + "\n".join(lines)
 
 
@@ -321,6 +609,78 @@ ROUTINES = [
      "Monthly market scan (`market-scan` SOP) with the subsidy deadlines from the Finance Controller's tracker: three opportunities and three threats, each with an action and owner."),
     ("quarterly-sku-review", "Quarterly product and strategy review", "ceo", "setup", "0 10 7 1,4,7,10 *",
      "Quarterly product and strategy review (`monthly-business-review` and `sku-master-governance` SOPs): kill list, priorities per business, and hires or agent changes to propose to the board."),
+    # ---- Added from the Agent Task Breakdown (scheduled tasks not covered above).
+    # Chief of Staff
+    ("missed-routine-check", "Missed-routine check", "ceo", "finance-governance", "0 10 * * *",
+     "Check that every routine due since yesterday 10:00 ran and reported. For each one that did not, open a fix task for its owner (agent or system owner) and list it in tomorrow's founder brief. One line if everything ran."),
+    # Finance Controller
+    ("daily-cash-line", "Daily cash line", "cfo", "finance-governance", "0 8 * * *",
+     "Calculate weeks of cash cover: bank balance plus receivables due this week, against committed payments and the 4-week need (`cash-and-margin-review` SOP). Post the number and its status for the Chief of Staff before 08:30; it is number 1 of the founder brief."),
+    ("monthly-pnl", "Monthly P&L per business", "cfo", "finance-governance", "0 10 1 * *",
+     "Build last month's profit and loss for each of the 7 businesses from the ledger and sales by channel (`cash-and-margin-review` SOP). Flag any business below target margin. Post it for the Chief of Staff's monthly business review on the 2nd."),
+    ("tax-calendar", "Tax calendar and working papers", "cfo", "finance-governance", "0 10 3 * *",
+     "List every GST, TDS and advance-tax date due in the next 45 days. Prepare the working papers for this month's filings and remind the CA at least 7 days before each due date. The CA files; you never file."),
+    ("subsidy-tracker-run", "Subsidy and scheme tracker", "cfo", "finance-governance", "0 10 5 * *",
+     "Update the scheme list, eligibility notes and deadlines (`subsidy-tracker` SOP). Send the board any scheme with a deadline in the next 60 days. Applications need board approval."),
+    # Supply Planner
+    ("supplier-scorecard", "Monthly supplier scorecard", "supply-planner", "operations-backbone", "0 11 3 * *",
+     "Score every supplier on QC rejects, price, on-time delivery and paperwork for last month (`supplier-management` SOP). Flag anyone below 80% two months running and propose options. A supplier change needs board approval."),
+    ("packaging-stock", "Packaging stock and reorders", "supply-planner", "operations-backbone", "0 11 * * 3",
+     "Compare packaging stock (trays, pouches, cartons, labels) with the usage rate and set reorder quantities. Send the reorder list to the Procurement Executive. Orders above the PO limit need approval."),
+    ("byproduct-plan", "Weekly byproduct plan", "supply-planner", "operations-backbone", "0 11 * * 6",
+     "From this week's processing records, list available bones, skin, fat, fish heads and shells with volumes, and match buyers. Send the offer list to the Revenue Lead. Prices need board approval."),
+    # Ops and Quality
+    ("dispatch-plan", "Dispatch plan", "ops-quality", "operations-backbone", "15 22 * * *",
+     "After the 22:00 order cut-off, build tomorrow's routes by slot (`dispatch-planning` SOP). Separate chilled and frozen loads and remove credit-held accounts. Post the route sheet for the dispatch team. Loading for a held account needs approval."),
+    ("otif-tracking", "On-time-in-full tracking", "ops-quality", "operations-backbone", "0 8 * * *",
+     "Record every delivery from yesterday as on time and in full or not, with the reason for each miss. Post the OTIF percentage for the Chief of Staff before 08:30; it is number 7 of the founder brief."),
+    ("expiry-list", "Daily expiry list", "ops-quality", "operations-backbone", "30 7 * * *",
+     "List stock expiring within 48 hours (fresh) or 30 days (frozen) by batch (`waste-and-expiry` SOP). Propose markdown, bulk sale or processing for each line and send to the store team and B2B Sales. Markdown prices need approval."),
+    ("weekly-loss-report", "Weekly loss report", "ops-quality", "operations-backbone", "0 12 * * 1",
+     "From last week's write-off log, report loss by reason and product (`waste-and-expiry` SOP). Give the top 3 causes with a fix and an owner for each. Send to the board."),
+    ("complaint-root-cause", "Weekly complaint root cause", "ops-quality", "operations-backbone", "0 15 * * 3",
+     "Take Customer Care's weekly trend list and link complaints to batches, suppliers and routes. Set corrective actions with owners for the QC lead and the Supply Planner."),
+    # Customer Care
+    ("care-trend-report", "Weekly complaint trend report", "customer-care", "operations-backbone", "0 10 * * 2",
+     "Count last week's complaints by category, product, batch and supplier, and list repeat complainers (`complaint-handling` SOP). Send the trend report to Ops and Quality before Wednesday's root-cause review."),
+    # Export Desk
+    ("destination-rules-watch", "Destination rules watch", "export-desk", "dubai", "0 11 10 * *",
+     "Check registrations and certificates for Dubai, Oman and Maldives against upcoming shipments (`export-order-flow` SOP). List anything expiring before the next shipments and open renewal tasks for Compliance and Legal."),
+    # Compliance and Legal
+    ("risk-register", "Monthly risk register", "compliance-legal", "finance-governance", "0 11 3 * *",
+     "Update the top 10 risks from last month's incidents, audits, breaches and complaints, each with likelihood, impact, owner and action. Send the register to the board."),
+    ("audit-readiness", "Monthly audit readiness", "compliance-legal", "finance-governance", "0 10 15 * *",
+     "Check SOPs, QC records and the HACCP plan are complete and current. List gaps with an owner and due date for Ops and the board. Run it again before any announced audit."),
+    ("staff-records", "Monthly staff records check", "compliance-legal", "finance-governance", "0 10 25 * *",
+     "Check food-handler medical fitness, training, PF and ESI records. List anything due in the next 30 days for the founder or HR person."),
+    # Analyst
+    ("brief-data", "Founder brief data", "analyst", "finance-governance", "0 8 * * *",
+     "Calculate yesterday's revenue by business and margin by channel from the ERP, accounting and CRM. Post numbers 8 and 9 of the founder brief for the Chief of Staff before 08:30, with the source and time of each number."),
+    ("demand-forecast", "Weekly demand forecast", "analyst", "operations-backbone", "0 12 * * 6",
+     "Forecast demand by product and location for the next 4 weeks from order history and upcoming festivals. Send it to the Supply Planner before Monday's buying."),
+    ("automation-backlog", "Monthly automation backlog", "analyst", "setup", "0 11 20 * *",
+     "From task history and the time people spend, list what to automate next and the hours each would save. Send the backlog to the board. Building anything needs approval."),
+    ("kill-list", "Quarterly kill list", "analyst", "setup", "0 11 5 1,4,7,10 *",
+     "List products with under 5 orders a month last quarter, to move to 'on request' (`sku-master-governance` SOP). Send the kill list to the Chief of Staff for the quarterly review on the 7th. The board decides."),
+    # Revenue Lead
+    ("export-upsell-plan", "Monthly export upsell plan", "revenue-lead", "dubai", "0 11 8 * *",
+     "For each export buyer, find categories they do not buy yet from their order history (for example eggs to a mutton buyer). Send the upsell list to Rajesh and Sai. Offer prices need approval."),
+    ("tender-calendar", "Weekly tender calendar", "revenue-lead", "india-b2g", "0 12 * * 1",
+     "Update the bid calendar from the Analyst's tender list with Sri Kumar: deadlines, deposits, go/no-go status and owners (`tender-bid` SOP)."),
+    ("promo-budget", "Monthly promo and ad budget", "revenue-lead", "india-b2c", "0 11 24 * *",
+     "From this month's B2C results and margin, propose next month's offers and ad budget with expected new customers and cost per customer. Raise a board approval; never exceed the approved budget."),
+    # B2B Sales Desk
+    ("lead-lists", "Weekly lead lists", "b2b-sales", "india-b2b", "0 10 * * 3",
+     "Build target lists of hotels, hospitals, institutions and supermarkets by area for the key account manager, with the reason each is a fit."),
+    ("account-health", "Weekly account health", "b2b-sales", "india-b2b", "0 12 * * 4",
+     "Score each B2B account on orders, complaints and overdue amounts. Flag at-risk accounts with a suggested action for the Revenue Lead."),
+    ("crm-hygiene", "Weekly CRM hygiene", "b2b-sales", "india-b2b", "0 11 * * 5",
+     "Fix duplicates, missing contacts and stale next steps in the CRM. Report what changed to Harnika. Never export customer data; Harnika owns that."),
+    # B2C Growth
+    ("subscriptions-winback", "Subscriptions and win-back", "b2c-growth", "india-b2c", "0 9 * * *",
+     "Renew due egg subscriptions and draft win-back offers for customers inactive 14 days (`b2c-acquisition` SOP). Opted-in customers only. Bulk sends need approval."),
+    ("content-calendar-run", "Weekly content calendar", "b2c-growth", "india-b2c", "0 15 * * 1",
+     "Plan this week's 3 posts, 2 reels and 1 offer with copy and briefs for the designer and photographer (`content-calendar` SOP). Check every claim is marked verified in the product list."),
 ]
 
 WEBHOOK_ROUTINES = [

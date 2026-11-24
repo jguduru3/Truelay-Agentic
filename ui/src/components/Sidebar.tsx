@@ -26,10 +26,12 @@ import {
   LayoutGrid,
   Users,
   Compass,
+  SlidersHorizontal,
 } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { SidebarSection } from "./SidebarSection";
+import { useIsSuperAdmin } from "../hooks/useIsSuperAdmin";
 import { SidebarNavItem } from "./SidebarNavItem";
 import { SidebarAgents } from "./SidebarAgents";
 import { SidebarProjects } from "./SidebarProjects";
@@ -60,6 +62,7 @@ export function Sidebar({ children }: { children?: ReactNode }) {
 
 function ClassicSidebar({ children }: { children?: ReactNode }) {
   const { openNewIssue } = useDialogActions();
+  const { isSuperAdmin } = useIsSuperAdmin();
   const { enabled: agentChatEnabled } = useAgentChatEnabled();
   const chatNavigation = useAgentChatNavigation();
   const unreadChatCount = chatNavigation.chats.data?.filter(chat => chat.isUnreadForMe).length ?? 0;
@@ -238,6 +241,7 @@ function ClassicSidebar({ children }: { children?: ReactNode }) {
             </>
           ) : null}
           <SidebarNavItem to="/routines" label="Routines" icon={Repeat} />
+          {isSuperAdmin ? <SidebarNavItem to="/agent-studio" label="Agent Studio" icon={SlidersHorizontal} /> : null}
           <SidebarNavItem to="/artifacts" label="Artifacts" icon={Package} />
           {showCases ? (
             <SidebarNavItem to="/cases" label="Cases" icon={Layers} textBadge="beta" />

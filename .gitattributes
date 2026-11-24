@@ -1,1 +1,7 @@
 patches/*.patch whitespace=-space-before-tab
+
+# Keep LF everywhere: migration files are verified by SHA-256, so a Windows
+# checkout with core.autocrlf=true would otherwise break the database setup.
+* text=auto eol=lf
+*.cmd text eol=crlf
+*.bat text eol=crlf

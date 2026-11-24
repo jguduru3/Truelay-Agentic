@@ -155,6 +155,7 @@ import { responsibilityRunRoutes } from "./routes/responsibility-runs.js";
 import { onboardingSeedRoutes } from "./routes/onboarding-seed.js";
 import { onboardingChatRoutes } from "./routes/onboarding-chat.js";
 import { boardChatRoutes } from "./routes/board-chat.js";
+import { agentStudioRoutes } from "./routes/agent-studio.js";
 import { approvalRoutes } from "./routes/approvals.js";
 import { secretRoutes } from "./routes/secrets.js";
 import { toolAccessRoutes } from "./routes/tool-access.js";
@@ -906,6 +907,7 @@ export async function createApp(
   api.use(onboardingSeedRoutes(db));
   api.use(onboardingChatRoutes(db, connectionIntentHeartbeat));
   api.use(boardChatRoutes(db, { deploymentMode: opts.deploymentMode }));
+  api.use(agentStudioRoutes(db));
   api.use(voiceSessionRoutes(db, chatChannels.voice));
   api.use(approvalRoutes(db, { pluginWorkerManager: workerManager }));
   api.use(secretRoutes(db));

@@ -19,7 +19,7 @@ The folder `truelay/truelay-paperclip` is a ready-to-import Paperclip company:
 | SOP skills (3 company-wide + 25 department SOPs) | 28 | `skills/<slug>/SKILL.md` |
 | Teams | 2 | `teams/revenue`, `teams/operations` |
 | Projects | 9 | `projects/<slug>/PROJECT.md` |
-| Routines (17 scheduled in IST + 1 cold-chain webhook) | 18 | `projects/*/tasks/<slug>/TASK.md` with `recurring: true` |
+| Routines (47 scheduled in IST + 1 cold-chain webhook) | 48 | `projects/*/tasks/<slug>/TASK.md` with `recurring: true` |
 | Starter tasks | 9 | `projects/*/tasks/<slug>/TASK.md` |
 | Paperclip settings: models, budgets, heartbeat off, permissions, env inputs, schedules | 1 | `.paperclip.yaml` |
 
@@ -141,7 +141,7 @@ Everything was imported paused. The whole runbook fits in one working day.
 
 **Hour 1 — company and rules**
 
-1. Confirm the import (deployment guide, section 5): 11 agents, 18 routines, all paused.
+1. Confirm the import (deployment guide, section 5): 11 agents, 48 routines, all paused.
 2. Founder and deputy are board members; "board approval for new agents" is on.
 3. Thresholds in `approval-gates` are your numbers.
 4. Anthropic monthly cap set; per-agent budgets checked on each agent's **Budget** tab.
@@ -160,7 +160,7 @@ Everything was imported paused. The whole runbook fits in one working day.
 
 **Afternoon — switch on**
 
-11. Resume all 11 agents (Agents page → each agent → **Resume**). Resume the 18 routines (Routines page).
+11. Resume all 11 agents (Agents page → each agent → **Resume**). Resume the 48 routines (Routines page).
 12. Run every agent once by hand on a connection-test task (integration guide, section 6). Fix any failure the same day.
 13. Assign the 9 starter tasks' first steps (they are already assigned; resuming the agents starts them).
 
@@ -238,7 +238,7 @@ Starting AI budget: $250 a month (about Rs 21,000) for all 11 agents. What keeps
 - Each run is capped at 60 agent turns and 30 minutes (`maxTurnsPerRun`, `timeoutSec`).
 - Paperclip pauses an agent at 100% of its budget.
 
-The busiest routines are the hourly complaint sweep (15 runs a day) and the 2-hourly cold-chain sweep (12 a day), both on Haiku. Review the **Costs** page after week 1 and month 1. If an agent is consistently under 50% of budget, lower it; if a judgment agent hits 80% before day 20, look at its run logs before raising it.
+The busiest routines are the hourly complaint sweep (15 runs a day) and the 2-hourly cold-chain sweep (12 a day), both on Haiku. The 47 scheduled routines cover every scheduled task in the Agent Task Breakdown (the draft POs run inside the buy plan, and the weekly margin report is one routine shared by Finance and the Analyst). Daily routines on Sonnet (founder brief, brief data, cash line, missed-routine check, buy plan) are the main cost; if Finance, the Analyst or the Chief of Staff nears 80% of budget, move its daily routine to Haiku or merge it into the founder brief run. Review the **Costs** page after week 1 and month 1. If an agent is consistently under 50% of budget, lower it; if a judgment agent hits 80% before day 20, look at its run logs before raising it.
 
 Other running costs (yours to confirm): the server (deployment guide, section 2); existing ERP, CRM, accounting and WhatsApp Business subscriptions. Paperclip itself is free and open source.
 
@@ -285,6 +285,7 @@ Good output is one screen, numbers against targets, only the exceptions explaine
 **Changed in this repository**
 
 - `paperclipai company import --pause-automations`: the CLI can now import a company with every agent and routine paused, matching the web UI's default. Without it, a CLI import would start the 03:30 buy plan before the data is ready. Code: `cli/src/commands/client/company.ts`; tests: `cli/src/__tests__/company.test.ts`.
+- **Agent Studio** (sidebar → *Agent Studio*, super admins only): one screen showing all agents, with a panel per agent for its job and four rule lists: *Always do*, *Never do*, *Ask the board first*, *No approval needed*. Write a change in plain English and AI shows a preview: rule changes, new or moved schedules, and whether each approval rule is followed by the agent or also needs a tool set to "Ask first". Nothing changes until you click **Apply**. Apply saves the rules into the agent's `AGENTS.md` (between `agent-studio:rules` markers, with full revision history) and creates or changes routines. You can also edit the rules by hand without AI. The AI preview needs `ANTHROPIC_API_KEY` on the server (optional `AGENT_STUDIO_MODEL`, default `claude-sonnet-5-5`). Every preview is recorded in the Activity log. Starting rules for all 11 agents come from the Agent Task Breakdown (`STUDIO_RULES` in `tools/gen_package.py`). Code: `ui/src/pages/AgentStudio.tsx`, `server/src/routes/agent-studio.ts`, `packages/shared/src/agent-studio.ts`.
 
 **Covered by configuration, no code needed**
 

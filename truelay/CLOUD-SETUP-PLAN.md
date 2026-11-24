@@ -219,7 +219,7 @@ sudo cp truelay/deploy/Caddyfile /etc/caddy/Caddyfile && sudo systemctl reload c
 
 ### Phase 6: import the company
 
-Follow the deployment guide, section 5, with the web import: **Company settings → Import**, upload `truelay/truelay-paperclip` as a zip, keep **Start imported agents and routines paused** ticked. You get the Truelay logo, 11 agents, 18 routines and 9 starter tasks, all paused. Confirm the $250 budget and invite the deputy.
+Follow the deployment guide, section 5, with the web import: **Company settings → Import**, upload `truelay/truelay-paperclip` as a zip, keep **Start imported agents and routines paused** ticked. You get the Truelay logo, 11 agents, 48 routines and 9 starter tasks, all paused. Confirm the $250 budget and invite the deputy.
 
 Upload one test attachment to any task and check it appears in the `paperclip-files` container in the portal.
 

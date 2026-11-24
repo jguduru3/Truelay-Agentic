@@ -653,6 +653,246 @@ routines:
         label: Quarterly product and strategy review
         cronExpression: "0 10 7 1,4,7,10 *"
         timezone: Asia/Kolkata
+  missed-routine-check:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Missed-routine check
+        cronExpression: "0 10 * * *"
+        timezone: Asia/Kolkata
+  daily-cash-line:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Daily cash line
+        cronExpression: "0 8 * * *"
+        timezone: Asia/Kolkata
+  monthly-pnl:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Monthly P&L per business
+        cronExpression: "0 10 1 * *"
+        timezone: Asia/Kolkata
+  tax-calendar:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Tax calendar and working papers
+        cronExpression: "0 10 3 * *"
+        timezone: Asia/Kolkata
+  subsidy-tracker-run:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Subsidy and scheme tracker
+        cronExpression: "0 10 5 * *"
+        timezone: Asia/Kolkata
+  supplier-scorecard:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Monthly supplier scorecard
+        cronExpression: "0 11 3 * *"
+        timezone: Asia/Kolkata
+  packaging-stock:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Packaging stock and reorders
+        cronExpression: "0 11 * * 3"
+        timezone: Asia/Kolkata
+  byproduct-plan:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Weekly byproduct plan
+        cronExpression: "0 11 * * 6"
+        timezone: Asia/Kolkata
+  dispatch-plan:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Dispatch plan
+        cronExpression: "15 22 * * *"
+        timezone: Asia/Kolkata
+  otif-tracking:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: On-time-in-full tracking
+        cronExpression: "0 8 * * *"
+        timezone: Asia/Kolkata
+  expiry-list:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Daily expiry list
+        cronExpression: "30 7 * * *"
+        timezone: Asia/Kolkata
+  weekly-loss-report:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Weekly loss report
+        cronExpression: "0 12 * * 1"
+        timezone: Asia/Kolkata
+  complaint-root-cause:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Weekly complaint root cause
+        cronExpression: "0 15 * * 3"
+        timezone: Asia/Kolkata
+  care-trend-report:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Weekly complaint trend report
+        cronExpression: "0 10 * * 2"
+        timezone: Asia/Kolkata
+  destination-rules-watch:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Destination rules watch
+        cronExpression: "0 11 10 * *"
+        timezone: Asia/Kolkata
+  risk-register:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Monthly risk register
+        cronExpression: "0 11 3 * *"
+        timezone: Asia/Kolkata
+  audit-readiness:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Monthly audit readiness
+        cronExpression: "0 10 15 * *"
+        timezone: Asia/Kolkata
+  staff-records:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Monthly staff records check
+        cronExpression: "0 10 25 * *"
+        timezone: Asia/Kolkata
+  brief-data:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Founder brief data
+        cronExpression: "0 8 * * *"
+        timezone: Asia/Kolkata
+  demand-forecast:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Weekly demand forecast
+        cronExpression: "0 12 * * 6"
+        timezone: Asia/Kolkata
+  automation-backlog:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Monthly automation backlog
+        cronExpression: "0 11 20 * *"
+        timezone: Asia/Kolkata
+  kill-list:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Quarterly kill list
+        cronExpression: "0 11 5 1,4,7,10 *"
+        timezone: Asia/Kolkata
+  export-upsell-plan:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Monthly export upsell plan
+        cronExpression: "0 11 8 * *"
+        timezone: Asia/Kolkata
+  tender-calendar:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Weekly tender calendar
+        cronExpression: "0 12 * * 1"
+        timezone: Asia/Kolkata
+  promo-budget:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Monthly promo and ad budget
+        cronExpression: "0 11 24 * *"
+        timezone: Asia/Kolkata
+  lead-lists:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Weekly lead lists
+        cronExpression: "0 10 * * 3"
+        timezone: Asia/Kolkata
+  account-health:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Weekly account health
+        cronExpression: "0 12 * * 4"
+        timezone: Asia/Kolkata
+  crm-hygiene:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Weekly CRM hygiene
+        cronExpression: "0 11 * * 5"
+        timezone: Asia/Kolkata
+  subscriptions-winback:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Subscriptions and win-back
+        cronExpression: "0 9 * * *"
+        timezone: Asia/Kolkata
+  content-calendar-run:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Weekly content calendar
+        cronExpression: "0 15 * * 1"
+        timezone: Asia/Kolkata
   cold-chain-alert:
     concurrencyPolicy: always_enqueue
     catchUpPolicy: skip_missed

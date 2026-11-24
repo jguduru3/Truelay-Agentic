@@ -23,6 +23,18 @@ python truelay/tools/gen_package.py truelay/truelay-paperclip
 
 Sources: *Truelay × Paperclip — Master Design* v1.0 and *Truelay AI Operations — Master Implementation Files* (23 Nov 2026). Where they disagree (one-day launch vs four waves), the implementation guide explains both and recommends one.
 
+## Configuring agents: Agent Studio
+
+Super admins (instance admins) get **Agent Studio** in the sidebar. It shows every agent with its job, schedules, approval rules and budget. Open an agent, describe a change in plain English, review the AI preview, then click **Apply**. See implementation guide, section 14.
+
+## Run it locally (Windows)
+
+```powershell
+cd "D:\Truelay Agentic"; .\truelay\run-local.ps1
+```
+
+Opens at http://localhost:3100. The first run creates its own database (port 54331, data in `~/.paperclip-truelay-agentic`). Set `$env:ANTHROPIC_API_KEY` first to enable the Agent Studio preview. Agents do not execute tasks locally without the Rust runner build; the cloud Docker image includes it.
+
 ## Order of work
 
 1. Read the implementation guide, sections 1-6, and make the decisions in section 6.

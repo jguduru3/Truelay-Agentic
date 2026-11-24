@@ -16,7 +16,7 @@ Read the other two guides next:
 ```
 Founder / board phone & laptop ──HTTPS──► Paperclip (board UI + API, port 3100)
                                                │  embedded PostgreSQL (or your own Postgres)
-                                               │  scheduler: 18 routines in Asia/Kolkata
+                                               │  scheduler: 48 routines in Asia/Kolkata
                                                ▼
                                      11 Claude Code agents (claude_local adapter)
                                                │
@@ -165,7 +165,7 @@ Fix every failure `doctor` reports before going on.
 ### Import with the web UI (recommended)
 
 1. **Company settings → Import**, choose **Upload folder** (or zip the `truelay-paperclip` folder and upload the zip).
-2. Check the preview: 11 agents, 28 skills, 9 projects, 18 routines, 9 starter tasks.
+2. Check the preview: 11 agents, 28 skills, 9 projects, 48 routines, 9 starter tasks.
 3. Keep **Start imported agents and routines paused** ticked (it is on by default). Everything lands paused.
 4. Enter secrets when asked. `ANTHROPIC_API_KEY` is optional per agent: leave it empty to use the key already on the server. Leave system tokens empty until each system is connected (integration guide).
 5. Import.
@@ -191,7 +191,7 @@ pnpm paperclipai company import ./truelay/truelay-paperclip --target new --pause
 | Agent budgets | $250/month total; warn at 80%, pause at 100% | `agents.*.budgetMonthlyCents` |
 | Timer heartbeat | Off; wake on routine or assignment only | `agents.*.runtime.heartbeat` |
 | Models | Sonnet 5.5 for judgment roles, Haiku 4.5 for high-frequency roles | `agents.*.adapter.config.model` |
-| Routines | 17 schedules in Asia/Kolkata + 1 webhook (cold-chain alert) | `routines` |
+| Routines | 47 schedules in Asia/Kolkata + 1 webhook (cold-chain alert) | `routines` |
 
 ## 6. Turn on the server-level safety settings
 

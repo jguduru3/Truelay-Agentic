@@ -22,10 +22,12 @@ import {
   GanttChartSquare,
   LayoutGrid,
   Compass,
+  SlidersHorizontal,
 } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { SidebarSection } from "./SidebarSection";
+import { useIsSuperAdmin } from "../hooks/useIsSuperAdmin";
 import { SidebarNavItem } from "./SidebarNavItem.production";
 import { SidebarAgents } from "./SidebarAgents.production";
 import { SidebarProjects } from "./SidebarProjects";
@@ -45,6 +47,7 @@ import { SidebarCompanyMenu } from "./SidebarCompanyMenu.production";
 
 export function Sidebar() {
   const { openNewIssue } = useDialogActions();
+  const { isSuperAdmin } = useIsSuperAdmin();
   // Every labeled section is collapsible (session-scoped, default open) —
   // one policy across static nav groups and the data-driven sections.
   const [workOpen, setWorkOpen] = useState(true);
@@ -175,6 +178,7 @@ export function Sidebar() {
             <SidebarNavItem to="/cases" label="Cases" icon={Layers} textBadge="beta" />
           ) : null}
           <SidebarNavItem to="/routines" label="Routines" icon={Repeat} />
+          {isSuperAdmin ? <SidebarNavItem to="/agent-studio" label="Agent Studio" icon={SlidersHorizontal} /> : null}
           {showGoalsLink ? (
             <SidebarNavItem to="/goals" label="Goals" icon={Target} />
           ) : goalsLinkPending ? (
