@@ -1,0 +1,137 @@
+name: Release rebranded npm packages
+
+# Builds every public package on Linux, renames them for your own npm scope
+# (scripts/pack-rebranded-npm.mjs), uploads the tarballs as an artifact and,
+# only when "publish" is ticked, publishes them to npm.
+#
+# One-time setup: add an npm automation token with publish rights on the scope
+# as the repository secret NPM_TOKEN. See doc/NPM-PUBLISHING.md.
+
+on:
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: npm scope for the packages (e.g. @autoorg)
+        required: true
+        default: "@autoorg"
+      cli:
+        description: Name of the CLI package and its command
+        required: true
+        default: autoorg
+      product:
+        description: Product name used in package descriptions
+        required: true
+        default: Automatic Organisation
+      tag:
+        description: npm dist-tag
+        required: true
+        default: latest
+      publish:
+        description: Publish to npm (otherwise only build and upload the tarballs)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-pack:
+    name: Build, rename and pack
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+        with:
+          version: 9.15.4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - name: Select the pinned Runner Rust toolchain
+        working-directory: packages/paperclip-runner
+        run: |
+          set -euo pipefail
+          rustup show
+          toolchain="$(rustup show active-toolchain | awk '{print $1}')"
+          echo "RUSTUP_TOOLCHAIN=$toolchain" >> "$GITHUB_ENV"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Test the rename step
+        run: pnpm test:rebrand-npm
+
+      - name: Pack and rename
+        env:
+          SCOPE: ${{ inputs.scope }}
+          CLI_NAME: ${{ inputs.cli }}
+          PRODUCT: ${{ inputs.product }}
+          REPOSITORY: ${{ github.server_url }}/${{ github.repository }}
+        run: |
+          node scripts/pack-rebranded-npm.mjs \
+            --scope "$SCOPE" --cli "$CLI_NAME" --product "$PRODUCT" \
+            --repository "$REPOSITORY" --out release-npm
+
+      - name: Smoke-test the renamed CLI
+        env:
+          CLI_NAME: ${{ inputs.cli }}
+        run: |
+          set -euo pipefail
+          smoke="$RUNNER_TEMP/cli-smoke"
+          mkdir -p "$smoke"
+          cd "$smoke"
+          npm init -y > /dev/null
+          # Resolve every renamed package from the local tarballs, not the registry.
+          node -e '
+            const fs = require("fs"), path = require("path");
+            const dir = process.argv[1];
+            const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
+            pkg.overrides = {};
+            for (const file of fs.readdirSync(dir).filter((f) => f.endsWith(".tgz"))) {
+              const name = require("child_process").execFileSync("tar", ["-xzOf", path.join(dir, file), "package/package.json"]).toString();
+              pkg.overrides[JSON.parse(name).name] = "file:" + path.join(dir, file);
+            }
+            fs.writeFileSync("package.json", JSON.stringify(pkg, null, 2));
+          ' "$GITHUB_WORKSPACE/release-npm/packages"
+          cli_tgz="$(ls "$GITHUB_WORKSPACE"/release-npm/packages/"$CLI_NAME"-[0-9]*.tgz)"
+          npm install --no-audit --no-fund "$cli_tgz"
+          npx --no-install "$CLI_NAME" --version
+          npx --no-install "$CLI_NAME" --help | head -20
+
+      - name: Upload packages
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: rebranded-npm-packages
+          path: release-npm/packages/*.tgz
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Publish to npm
+        if: ${{ inputs.publish }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          TAG: ${{ inputs.tag }}
+          CLI_NAME: ${{ inputs.cli }}
+        run: |
+          set -euo pipefail
+          test -n "$NODE_AUTH_TOKEN" || { echo "Add the NPM_TOKEN repository secret first." >&2; exit 1; }
+          # The CLI goes last so it is never installable before its dependencies exist.
+          cli_tgz="$(ls release-npm/packages/"$CLI_NAME"-[0-9]*.tgz)"
+          for tgz in release-npm/packages/*.tgz; do
+            [ "$tgz" = "$cli_tgz" ] && continue
+            npm publish "$tgz" --access public --tag "$TAG"
+          done
+          npm publish "$cli_tgz" --access public --tag "$TAG"

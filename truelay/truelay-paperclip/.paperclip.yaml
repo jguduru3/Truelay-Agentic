@@ -1,0 +1,663 @@
+schema: paperclip/v1
+schemaVersion: 7
+company:
+  requireBoardApprovalForNewAgents: true
+  logoPath: images/company-logo.png
+agents:
+  ceo:
+    role: ceo
+    budgetMonthlyCents: 4000
+    adapter:
+      type: claude_local
+      config:
+        model: claude-sonnet-5-5
+        effort: medium
+        maxTurnsPerRun: 60
+        timeoutSec: 1800
+        graceSec: 15
+    runtime:
+      heartbeat:
+        enabled: false
+        intervalSec: 0
+        wakeOnDemand: true
+        wakeOnAssignment: true
+        wakeOnAutomation: true
+        maxConcurrentRuns: 1
+    permissions:
+      canCreateAgents: false
+    inputs:
+      env:
+        ANTHROPIC_API_KEY:
+          kind: secret
+          requirement: optional
+          description: Anthropic API key. Leave empty to use the key or Claude login on the Paperclip host.
+        ERP_API_URL:
+          kind: plain
+          requirement: optional
+          description: ERP base URL (Zoho Inventory, Odoo or ERPNext). Leave empty until connected; agents then read data/erp/ files.
+        ERP_API_TOKEN:
+          kind: secret
+          requirement: optional
+          description: ERP read token. Read-only first; write tools stay ask-first.
+        ACCOUNTING_API_URL:
+          kind: plain
+          requirement: optional
+          description: Accounting base URL (Zoho Books or Tally Prime gateway).
+        ACCOUNTING_API_TOKEN:
+          kind: secret
+          requirement: optional
+          description: Accounting read token.
+        CRM_API_URL:
+          kind: plain
+          requirement: optional
+          description: CRM base URL (Zoho CRM, HubSpot or Odoo CRM).
+        CRM_API_TOKEN:
+          kind: secret
+          requirement: optional
+          description: CRM token. Bulk export and bulk send stay ask-first.
+  cfo:
+    role: cfo
+    budgetMonthlyCents: 2500
+    adapter:
+      type: claude_local
+      config:
+        model: claude-sonnet-5-5
+        effort: medium
+        maxTurnsPerRun: 60
+        timeoutSec: 1800
+        graceSec: 15
+    runtime:
+      heartbeat:
+        enabled: false
+        intervalSec: 0
+        wakeOnDemand: true
+        wakeOnAssignment: true
+        wakeOnAutomation: true
+        maxConcurrentRuns: 1
+    permissions:
+      canCreateAgents: false
+    inputs:
+      env:
+        ANTHROPIC_API_KEY:
+          kind: secret
+          requirement: optional
+          description: Anthropic API key. Leave empty to use the key or Claude login on the Paperclip host.
+        ACCOUNTING_API_URL:
+          kind: plain
+          requirement: optional
+          description: Accounting base URL (Zoho Books or Tally Prime gateway).
+        ACCOUNTING_API_TOKEN:
+          kind: secret
+          requirement: optional
+          description: Accounting read token.
+        ERP_API_URL:
+          kind: plain
+          requirement: optional
+          description: ERP base URL (Zoho Inventory, Odoo or ERPNext). Leave empty until connected; agents then read data/erp/ files.
+        ERP_API_TOKEN:
+          kind: secret
+          requirement: optional
+          description: ERP read token. Read-only first; write tools stay ask-first.
+  supply-planner:
+    role: general
+    budgetMonthlyCents: 2500
+    adapter:
+      type: claude_local
+      config:
+        model: claude-sonnet-5-5
+        effort: medium
+        maxTurnsPerRun: 60
+        timeoutSec: 1800
+        graceSec: 15
+    runtime:
+      heartbeat:
+        enabled: false
+        intervalSec: 0
+        wakeOnDemand: true
+        wakeOnAssignment: true
+        wakeOnAutomation: true
+        maxConcurrentRuns: 1
+    permissions:
+      canCreateAgents: false
+    inputs:
+      env:
+        ANTHROPIC_API_KEY:
+          kind: secret
+          requirement: optional
+          description: Anthropic API key. Leave empty to use the key or Claude login on the Paperclip host.
+        ERP_API_URL:
+          kind: plain
+          requirement: optional
+          description: ERP base URL (Zoho Inventory, Odoo or ERPNext). Leave empty until connected; agents then read data/erp/ files.
+        ERP_API_TOKEN:
+          kind: secret
+          requirement: optional
+          description: ERP read token. Read-only first; write tools stay ask-first.
+  ops-quality:
+    role: general
+    budgetMonthlyCents: 2500
+    adapter:
+      type: claude_local
+      config:
+        model: claude-haiku-4-5
+        maxTurnsPerRun: 60
+        timeoutSec: 1800
+        graceSec: 15
+    runtime:
+      heartbeat:
+        enabled: false
+        intervalSec: 0
+        wakeOnDemand: true
+        wakeOnAssignment: true
+        wakeOnAutomation: true
+        maxConcurrentRuns: 1
+    permissions:
+      canCreateAgents: false
+    inputs:
+      env:
+        ANTHROPIC_API_KEY:
+          kind: secret
+          requirement: optional
+          description: Anthropic API key. Leave empty to use the key or Claude login on the Paperclip host.
+        ERP_API_URL:
+          kind: plain
+          requirement: optional
+          description: ERP base URL (Zoho Inventory, Odoo or ERPNext). Leave empty until connected; agents then read data/erp/ files.
+        ERP_API_TOKEN:
+          kind: secret
+          requirement: optional
+          description: ERP read token. Read-only first; write tools stay ask-first.
+        COLDCHAIN_FEED_URL:
+          kind: plain
+          requirement: optional
+          description: Cold-chain logger feed URL (read-only).
+  customer-care:
+    role: general
+    budgetMonthlyCents: 2000
+    adapter:
+      type: claude_local
+      config:
+        model: claude-haiku-4-5
+        maxTurnsPerRun: 60
+        timeoutSec: 1800
+        graceSec: 15
+    runtime:
+      heartbeat:
+        enabled: false
+        intervalSec: 0
+        wakeOnDemand: true
+        wakeOnAssignment: true
+        wakeOnAutomation: true
+        maxConcurrentRuns: 1
+    permissions:
+      canCreateAgents: false
+    inputs:
+      env:
+        ANTHROPIC_API_KEY:
+          kind: secret
+          requirement: optional
+          description: Anthropic API key. Leave empty to use the key or Claude login on the Paperclip host.
+        CRM_API_URL:
+          kind: plain
+          requirement: optional
+          description: CRM base URL (Zoho CRM, HubSpot or Odoo CRM).
+        CRM_API_TOKEN:
+          kind: secret
+          requirement: optional
+          description: CRM token. Bulk export and bulk send stay ask-first.
+        WHATSAPP_BUSINESS_TOKEN:
+          kind: secret
+          requirement: optional
+          description: WhatsApp Business API token. Every send to a new contact is ask-first.
+        ERP_API_URL:
+          kind: plain
+          requirement: optional
+          description: ERP base URL (Zoho Inventory, Odoo or ERPNext). Leave empty until connected; agents then read data/erp/ files.
+        ERP_API_TOKEN:
+          kind: secret
+          requirement: optional
+          description: ERP read token. Read-only first; write tools stay ask-first.
+  export-desk:
+    role: general
+    budgetMonthlyCents: 2500
+    adapter:
+      type: claude_local
+      config:
+        model: claude-sonnet-5-5
+        effort: high
+        maxTurnsPerRun: 60
+        timeoutSec: 1800
+        graceSec: 15
+    runtime:
+      heartbeat:
+        enabled: false
+        intervalSec: 0
+        wakeOnDemand: true
+        wakeOnAssignment: true
+        wakeOnAutomation: true
+        maxConcurrentRuns: 1
+    permissions:
+      canCreateAgents: false
+    inputs:
+      env:
+        ANTHROPIC_API_KEY:
+          kind: secret
+          requirement: optional
+          description: Anthropic API key. Leave empty to use the key or Claude login on the Paperclip host.
+        ERP_API_URL:
+          kind: plain
+          requirement: optional
+          description: ERP base URL (Zoho Inventory, Odoo or ERPNext). Leave empty until connected; agents then read data/erp/ files.
+        ERP_API_TOKEN:
+          kind: secret
+          requirement: optional
+          description: ERP read token. Read-only first; write tools stay ask-first.
+        CRM_API_URL:
+          kind: plain
+          requirement: optional
+          description: CRM base URL (Zoho CRM, HubSpot or Odoo CRM).
+        CRM_API_TOKEN:
+          kind: secret
+          requirement: optional
+          description: CRM token. Bulk export and bulk send stay ask-first.
+        SHARED_DRIVE_FOLDER_URL:
+          kind: plain
+          requirement: optional
+          description: Shared drive folder holding licences, contracts and certificates.
+  revenue-lead:
+    role: cmo
+    budgetMonthlyCents: 2000
+    adapter:
+      type: claude_local
+      config:
+        model: claude-sonnet-5-5
+        effort: medium
+        maxTurnsPerRun: 60
+        timeoutSec: 1800
+        graceSec: 15
+    runtime:
+      heartbeat:
+        enabled: false
+        intervalSec: 0
+        wakeOnDemand: true
+        wakeOnAssignment: true
+        wakeOnAutomation: true
+        maxConcurrentRuns: 1
+    permissions:
+      canCreateAgents: false
+    inputs:
+      env:
+        ANTHROPIC_API_KEY:
+          kind: secret
+          requirement: optional
+          description: Anthropic API key. Leave empty to use the key or Claude login on the Paperclip host.
+        CRM_API_URL:
+          kind: plain
+          requirement: optional
+          description: CRM base URL (Zoho CRM, HubSpot or Odoo CRM).
+        CRM_API_TOKEN:
+          kind: secret
+          requirement: optional
+          description: CRM token. Bulk export and bulk send stay ask-first.
+  b2b-sales:
+    role: general
+    budgetMonthlyCents: 1500
+    adapter:
+      type: claude_local
+      config:
+        model: claude-haiku-4-5
+        maxTurnsPerRun: 60
+        timeoutSec: 1800
+        graceSec: 15
+    runtime:
+      heartbeat:
+        enabled: false
+        intervalSec: 0
+        wakeOnDemand: true
+        wakeOnAssignment: true
+        wakeOnAutomation: true
+        maxConcurrentRuns: 1
+    permissions:
+      canCreateAgents: false
+    inputs:
+      env:
+        ANTHROPIC_API_KEY:
+          kind: secret
+          requirement: optional
+          description: Anthropic API key. Leave empty to use the key or Claude login on the Paperclip host.
+        CRM_API_URL:
+          kind: plain
+          requirement: optional
+          description: CRM base URL (Zoho CRM, HubSpot or Odoo CRM).
+        CRM_API_TOKEN:
+          kind: secret
+          requirement: optional
+          description: CRM token. Bulk export and bulk send stay ask-first.
+        WHATSAPP_BUSINESS_TOKEN:
+          kind: secret
+          requirement: optional
+          description: WhatsApp Business API token. Every send to a new contact is ask-first.
+        ACCOUNTING_API_URL:
+          kind: plain
+          requirement: optional
+          description: Accounting base URL (Zoho Books or Tally Prime gateway).
+        ACCOUNTING_API_TOKEN:
+          kind: secret
+          requirement: optional
+          description: Accounting read token.
+  b2c-growth:
+    role: general
+    budgetMonthlyCents: 1500
+    adapter:
+      type: claude_local
+      config:
+        model: claude-haiku-4-5
+        maxTurnsPerRun: 60
+        timeoutSec: 1800
+        graceSec: 15
+    runtime:
+      heartbeat:
+        enabled: false
+        intervalSec: 0
+        wakeOnDemand: true
+        wakeOnAssignment: true
+        wakeOnAutomation: true
+        maxConcurrentRuns: 1
+    permissions:
+      canCreateAgents: false
+    inputs:
+      env:
+        ANTHROPIC_API_KEY:
+          kind: secret
+          requirement: optional
+          description: Anthropic API key. Leave empty to use the key or Claude login on the Paperclip host.
+        CRM_API_URL:
+          kind: plain
+          requirement: optional
+          description: CRM base URL (Zoho CRM, HubSpot or Odoo CRM).
+        CRM_API_TOKEN:
+          kind: secret
+          requirement: optional
+          description: CRM token. Bulk export and bulk send stay ask-first.
+        WHATSAPP_BUSINESS_TOKEN:
+          kind: secret
+          requirement: optional
+          description: WhatsApp Business API token. Every send to a new contact is ask-first.
+  compliance-legal:
+    role: general
+    budgetMonthlyCents: 1500
+    adapter:
+      type: claude_local
+      config:
+        model: claude-sonnet-5-5
+        effort: medium
+        maxTurnsPerRun: 60
+        timeoutSec: 1800
+        graceSec: 15
+    runtime:
+      heartbeat:
+        enabled: false
+        intervalSec: 0
+        wakeOnDemand: true
+        wakeOnAssignment: true
+        wakeOnAutomation: true
+        maxConcurrentRuns: 1
+    permissions:
+      canCreateAgents: false
+    inputs:
+      env:
+        ANTHROPIC_API_KEY:
+          kind: secret
+          requirement: optional
+          description: Anthropic API key. Leave empty to use the key or Claude login on the Paperclip host.
+        SHARED_DRIVE_FOLDER_URL:
+          kind: plain
+          requirement: optional
+          description: Shared drive folder holding licences, contracts and certificates.
+  analyst:
+    role: researcher
+    budgetMonthlyCents: 2500
+    adapter:
+      type: claude_local
+      config:
+        model: claude-sonnet-5-5
+        effort: medium
+        maxTurnsPerRun: 60
+        timeoutSec: 1800
+        graceSec: 15
+    runtime:
+      heartbeat:
+        enabled: false
+        intervalSec: 0
+        wakeOnDemand: true
+        wakeOnAssignment: true
+        wakeOnAutomation: true
+        maxConcurrentRuns: 1
+    permissions:
+      canCreateAgents: false
+    inputs:
+      env:
+        ANTHROPIC_API_KEY:
+          kind: secret
+          requirement: optional
+          description: Anthropic API key. Leave empty to use the key or Claude login on the Paperclip host.
+        ERP_API_URL:
+          kind: plain
+          requirement: optional
+          description: ERP base URL (Zoho Inventory, Odoo or ERPNext). Leave empty until connected; agents then read data/erp/ files.
+        ERP_API_TOKEN:
+          kind: secret
+          requirement: optional
+          description: ERP read token. Read-only first; write tools stay ask-first.
+        ACCOUNTING_API_URL:
+          kind: plain
+          requirement: optional
+          description: Accounting base URL (Zoho Books or Tally Prime gateway).
+        ACCOUNTING_API_TOKEN:
+          kind: secret
+          requirement: optional
+          description: Accounting read token.
+        CRM_API_URL:
+          kind: plain
+          requirement: optional
+          description: CRM base URL (Zoho CRM, HubSpot or Odoo CRM).
+        CRM_API_TOKEN:
+          kind: secret
+          requirement: optional
+          description: CRM token. Bulk export and bulk send stay ask-first.
+        DASHBOARD_URL:
+          kind: plain
+          requirement: optional
+          description: Looker Studio or Metabase dashboard URL.
+projects:
+  india-b2b:
+    leadAgentSlug: revenue-lead
+    color: "#2563eb"
+  india-b2c:
+    leadAgentSlug: b2c-growth
+    color: "#db2777"
+  india-b2g:
+    leadAgentSlug: compliance-legal
+    color: "#16a34a"
+  dubai:
+    leadAgentSlug: export-desk
+    color: "#d97706"
+  oman:
+    leadAgentSlug: export-desk
+    color: "#0891b2"
+  maldives:
+    leadAgentSlug: export-desk
+    color: "#7c3aed"
+  operations-backbone:
+    leadAgentSlug: ops-quality
+    color: "#dc2626"
+  finance-governance:
+    leadAgentSlug: cfo
+    color: "#475569"
+  setup:
+    leadAgentSlug: ceo
+    color: "#65a30d"
+tasks:
+  resolve-source-gaps:
+    priority: high
+  build-sku-master:
+    priority: high
+  compliance-register:
+    priority: high
+  founder-dashboard:
+    priority: high
+  crm-migration:
+    priority: medium
+  cold-chain-loggers:
+    priority: medium
+  hire-india-b2b-kam:
+    priority: medium
+  mygate-pilot:
+    priority: medium
+  gem-registration:
+    priority: medium
+routines:
+  daily-buy-plan-run:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Daily buy plan
+        cronExpression: "30 3 * * *"
+        timezone: Asia/Kolkata
+  cold-chain-sweep:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Cold-chain sweep
+        cronExpression: "0 */2 * * *"
+        timezone: Asia/Kolkata
+  complaint-sweep:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Complaint sweep
+        cronExpression: "0 8-22 * * *"
+        timezone: Asia/Kolkata
+  founder-daily-brief-run:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Founder daily brief
+        cronExpression: "30 8 * * *"
+        timezone: Asia/Kolkata
+  ops-huddle-prep:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Ops huddle prep
+        cronExpression: "45 8 * * *"
+        timezone: Asia/Kolkata
+  collections-run:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Collections run
+        cronExpression: "0 10 * * 1-6"
+        timezone: Asia/Kolkata
+  tender-scan-run:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Tender scan
+        cronExpression: "0 11 * * 1-5"
+        timezone: Asia/Kolkata
+  export-shipment-watch:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Export shipment watch
+        cronExpression: "0 12 * * 1-6"
+        timezone: Asia/Kolkata
+  reorder-nudges:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Reorder nudges
+        cronExpression: "0 16 * * *"
+        timezone: Asia/Kolkata
+  weekly-pipeline-review:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Weekly pipeline review
+        cronExpression: "30 9 * * 1"
+        timezone: Asia/Kolkata
+  compliance-check:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Compliance check
+        cronExpression: "0 10 * * 1"
+        timezone: Asia/Kolkata
+  b2c-weekly-growth:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: B2C weekly growth review
+        cronExpression: "0 10 * * 2"
+        timezone: Asia/Kolkata
+  cash-review:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Cash and collections review
+        cronExpression: "0 11 * * 4"
+        timezone: Asia/Kolkata
+  weekly-margin-report:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Weekly margin report
+        cronExpression: "0 15 * * 5"
+        timezone: Asia/Kolkata
+  monthly-business-review-run:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Monthly business review
+        cronExpression: "0 10 2 * *"
+        timezone: Asia/Kolkata
+  monthly-market-scan:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Monthly market and subsidy scan
+        cronExpression: "0 11 5 * *"
+        timezone: Asia/Kolkata
+  quarterly-sku-review:
+    concurrencyPolicy: coalesce_if_active
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: schedule
+        label: Quarterly product and strategy review
+        cronExpression: "0 10 7 1,4,7,10 *"
+        timezone: Asia/Kolkata
+  cold-chain-alert:
+    concurrencyPolicy: always_enqueue
+    catchUpPolicy: skip_missed
+    triggers:
+      - kind: webhook
+        label: Cold-chain logger alert
+        signingMode: bearer
+        replayWindowSec: 300

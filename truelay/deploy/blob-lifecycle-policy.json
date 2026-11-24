@@ -1,0 +1,21 @@
+{
+  "rules": [
+    {
+      "enabled": true,
+      "name": "truelay-backups-cool-then-delete",
+      "type": "Lifecycle",
+      "definition": {
+        "filters": {
+          "blobTypes": ["blockBlob"],
+          "prefixMatch": ["backups/"]
+        },
+        "actions": {
+          "baseBlob": {
+            "tierToCool": { "daysAfterModificationGreaterThan": 7 },
+            "delete": { "daysAfterModificationGreaterThan": 30 }
+          }
+        }
+      }
+    }
+  ]
+}

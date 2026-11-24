@@ -1,0 +1,58 @@
+# Truelay EggBreak on Azure: the app container for one Azure VM.
+#
+# - Database: Azure Database for PostgreSQL Flexible Server (DATABASE_URL in .env,
+#   with ?sslmode=require). No database container runs on the VM.
+# - Uploaded files: an Azure Blob Storage container mounted on the VM at
+#   /mnt/truelay-files by BlobFuse2 (see blobfuse2.yaml and blobfuse2-truelay.service).
+#   Paperclip's local-disk storage writes there through PAPERCLIP_STORAGE_LOCAL_DIR.
+# - Agent workspaces, secrets key and run data stay on the VM disk (paperclip-data
+#   volume): they need fast local file access and must not live on a FUSE mount.
+# - Paperclip listens on 127.0.0.1 only; Caddy terminates HTTPS in front.
+#
+# Run from the repository root:
+#   docker compose -f truelay/deploy/docker-compose.truelay.yml --env-file truelay/deploy/.env up -d --build
+
+name: truelay-eggbreak
+
+services:
+  server:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+      target: production
+    image: truelay-eggbreak:latest
+    restart: unless-stopped
+    pids_limit: 2048
+    stop_grace_period: 90s
+    ports:
+      - "127.0.0.1:3100:3100"
+    environment:
+      DATABASE_URL: "${DATABASE_URL:?set DATABASE_URL in .env}"
+      PORT: "3100"
+      SERVE_UI: "true"
+      TZ: Asia/Kolkata
+      # Branding (see doc/BRANDING.md). Override any of these in .env.
+      APP_PRODUCT_NAME: "${APP_PRODUCT_NAME:-Truelay EggBreak}"
+      APP_BRAND_NAME: "${APP_BRAND_NAME:-Truelay}"
+      APP_DESCRIPTION: "${APP_DESCRIPTION:-Truelay operations: AI agents, tasks and approvals}"
+      APP_LOGO_URL: "${APP_LOGO_URL:-/brand/truelay/wordmark.png}"
+      APP_ICON_URL: "${APP_ICON_URL:-/brand/truelay/favicon.svg}"
+      APP_APP_ICON_URL: "${APP_APP_ICON_URL:-/brand/truelay/icon-512.png}"
+      PAPERCLIP_DEPLOYMENT_MODE: authenticated
+      PAPERCLIP_DEPLOYMENT_EXPOSURE: public
+      PAPERCLIP_PUBLIC_URL: "${PAPERCLIP_PUBLIC_URL:?set PAPERCLIP_PUBLIC_URL in .env}"
+      BETTER_AUTH_SECRET: "${BETTER_AUTH_SECRET:?set BETTER_AUTH_SECRET in .env}"
+      PAPERCLIP_TOOL_ACTION_SIGNING_SECRET: "${PAPERCLIP_TOOL_ACTION_SIGNING_SECRET:?set PAPERCLIP_TOOL_ACTION_SIGNING_SECRET in .env}"
+      PAPERCLIP_AUTH_DISABLE_SIGN_UP: "${PAPERCLIP_AUTH_DISABLE_SIGN_UP:-false}"
+      ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY:-}"
+      PAPERCLIP_STORAGE_PROVIDER: local_disk
+      PAPERCLIP_STORAGE_LOCAL_DIR: /paperclip-files
+      # Paperclip's own hourly dumps are not needed: Azure PostgreSQL keeps
+      # point-in-time backups, and backup.sh copies a nightly dump to Blob.
+      PAPERCLIP_DB_BACKUP_ENABLED: "false"
+    volumes:
+      - paperclip-data:/paperclip
+      - /mnt/truelay-files:/paperclip-files
+
+volumes:
+  paperclip-data:

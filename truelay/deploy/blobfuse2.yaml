@@ -1,0 +1,36 @@
+# BlobFuse2 config: mounts the Azure Blob container "paperclip-files" at /mnt/truelay-files.
+# Install to /etc/blobfuse2/truelay.yaml. Sign-in uses the VM's system-assigned managed
+# identity, so no storage key or SAS token is stored on the VM.
+# Replace "truelayeggbreak" with your storage account name.
+
+allow-other: true
+
+logging:
+  type: syslog
+  level: log_warning
+
+components:
+  - libfuse
+  - file_cache
+  - attr_cache
+  - azstorage
+
+libfuse:
+  attribute-expiration-sec: 120
+  entry-expiration-sec: 120
+  negative-entry-expiration-sec: 240
+
+file_cache:
+  path: /var/cache/blobfuse2/truelay
+  timeout-sec: 120
+  max-size-mb: 4096
+
+attr_cache:
+  timeout-sec: 7200
+
+azstorage:
+  type: block
+  account-name: truelayeggbreak
+  container: paperclip-files
+  endpoint: https://truelayeggbreak.blob.core.windows.net
+  mode: msi

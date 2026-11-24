@@ -1,0 +1,24 @@
+# systemd unit: mount the Blob container before Docker starts.
+# Install:  sudo cp truelay/deploy/blobfuse2-truelay.service /etc/systemd/system/
+#           sudo systemctl daemon-reload && sudo systemctl enable --now blobfuse2-truelay
+# Runs as uid/gid 1000, the same user the Paperclip container runs as, so the
+# container can read and write the mounted files.
+
+[Unit]
+Description=Truelay EggBreak file storage (Azure Blob via BlobFuse2)
+Wants=network-online.target
+After=network-online.target
+Before=docker.service
+
+[Service]
+Type=forking
+User=azureuser
+Group=azureuser
+ExecStartPre=/usr/bin/mkdir -p /var/cache/blobfuse2/truelay
+ExecStart=/usr/bin/blobfuse2 mount /mnt/truelay-files --config-file=/etc/blobfuse2/truelay.yaml
+ExecStop=/usr/bin/blobfuse2 unmount /mnt/truelay-files
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
